@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking de Donaciones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    .progress-container {
+      margin: 20px 0;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 25px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 30px;
+      background-color: #4caf50;
+      text-align: center;
+      line-height: 30px;
+      color: white;
+    }
+    .ranking-container {
+      margin-top: 40px;
+    }
+    .donador {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .donador img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
+    .donador .name {
+      flex: 1;
+      font-size: 18px;
+    }
+    .donador .amount {
+      font-weight: bold;
+      color: #333;
+    }
+    .reward {
+      text-align: center;
+      margin-top: 20px;
+      color: #ff9800;
+    }
+
+
+    .countdown-container {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 24px;
+      color: #ff9800;
+    }
+
+    /* Estilo para el carrusel de premios */
+    .carousel {
+      width: 80%;
+      margin: 40px auto;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+    }
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .carousel-item {
+      min-width: 100%;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .carousel-item img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    .carousel-item h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .carousel-item p {
+      color: #555;
+    }
+
+    /* Botones de navegación */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .carousel-btn.prev {
+      left: 10px;
+    }
+    .carousel-btn.next {
+      right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>¡Conviértete en el Donador Estrella!</h1>
+
+  <!-- Barra de Progreso -->
+  <div class="progress-container">
+    <p>Total Donado: <span id="total-donado">$0</span> de <span id="meta">$500</span></p>
+    <div class="progress-bar">
+      <div id="progress-fill" class="progress-bar-fill" style="width: 0%;">0%</div>
+    </div>
+  </div>
+
+  <!-- Ranking de Donadores -->
+  <div class="ranking-container">
+    <h2>Top Donadores</h2>
+    <div class="donador">
+      <img src="avatar1.jpg" alt="Donador 1">
+      <div class="name">Donador 1</div>
+      <div class="amount">$0</div>
+    </div>
+    <div class="donador">
+      <img src="avatar2.jpg" alt="Donador 2">
+      <div class="name">Donador 2</div>
+      <div class="amount">$0</div>
+    </div>
+    <div class="donador">
+      <img src="avatar3.jpg" alt="Donador 3">
+      <div class="name">Donador 3</div>
+      <div class="amount">$0</div>
+    </div>
+    <div class="donador">
+      <img src="avatar3.jpg" alt="Donador 3">
+      <div class="name">Donador 4</div>
+      <div class="amount">$0</div>
+    </div>
+  </div>
+
+  <!-- Recompensas -->
+  <div class="reward">
+    <p>¡El top donador del mes gana un premio especial!</p>
+  </div>
+
+  
+
+  <!-- Carrusel de Premios -->
+  <div class="carousel">
+    <div class="carousel-inner" id="carouselInner">
+      <div class="carousel-item">
+        <img src="premio1.jpg" alt="Premio 1">
+        <h3>Premio 1</h3>
+        <p>¡Gana un viaje todo pagado a una ciudad sorpresa!</p>
+      </div>
+      <div class="carousel-item">
+        <img src="premio2.jpg" alt="Premio 2">
+        <h3>Premio 2</h3>
+        <p>Un set de gadgets exclusivos de edición limitada.</p>
+      </div>
+      <div class="carousel-item">
+        <img src="premio3.jpg" alt="Premio 3">
+        <h3>Premio 3</h3>
+        <p>Acceso VIP a nuestros eventos especiales durante un año.</p>
+      </div>
+    </div>
+
+    <!-- Botones de navegación -->
+    <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
+  </div>
+
+<!-- Cuenta Regresiva Global -->
+<div class="countdown-container">
+  <h2>Tiempo Restante para el Evento</h2>
+  <p id="countdown">Cargando...</p>
+</div>
+
+  <script>
+    let currentIndex = 0;
+    const carouselInner = document.getElementById('carouselInner');
+    const items = document.querySelectorAll('.carousel-item');
+    const totalItems = items.length;
+
+    function updateCarousel() {
+      // Calcular el desplazamiento basado en el índice actual
+      const offset = -currentIndex * 100;
+      carouselInner.style.transform = `translateX(${offset}%)`;
+    }
+
+    function moveSlide(direction) {
+      // Actualizar el índice basado en la dirección
+      currentIndex = (currentIndex + direction + totalItems) % totalItems;
+      updateCarousel();
+    }
+
+    // Inicializar el carrusel en la primera posición
+    updateCarousel();
+
+    // Función para inicializar la cuenta regresiva
+    function iniciarCuentaRegresiva() {
+      const fechaFinal = new Date("2024-09-30T00:00:00").getTime(); // Cambia esta fecha para el final del evento
+      const cuentaRegresiva = setInterval(function() {
+        const ahora = new Date().getTime();
+        const distancia = fechaFinal - ahora;
+
+        // Cálculos de días, horas, minutos y segundos
+        const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        // Mostrar el resultado
+        document.getElementById("countdown").innerHTML =
+          dias + "d " + horas + "h " + minutos + "m " + segundos + "s ";
+
+        // Si se termina el contador
+        if (distancia < 0) {
+          clearInterval(cuentaRegresiva);
+          document.getElementById("countdown").innerHTML = "¡El evento ha terminado!";
+        }
+      }, 1000);
+    }
+
+    // Iniciar la cuenta regresiva al cargar la página
+    iniciarCuentaRegresiva();
+  </script>
+
+</body>
+</html>
